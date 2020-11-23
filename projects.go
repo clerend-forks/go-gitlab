@@ -414,6 +414,7 @@ type ProjectEvent struct {
 	TargetType     interface{} `json:"target_type"`
 	AuthorID       int         `json:"author_id"`
 	AuthorUsername string      `json:"author_username"`
+	CreatedAt      *time.Time  `json:"created_at"`
 	Data           struct {
 		Before            string      `json:"before"`
 		After             string      `json:"after"`
