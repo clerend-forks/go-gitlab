@@ -436,6 +436,44 @@ func (s *MergeRequestsService) GetMergeRequestParticipants(pid interface{}, merg
 	return ps, resp, err
 }
 
+// MergeRequestResourceStateEvent represents Gitlab merge request resource state event.
+//
+// Gitlab API docs:
+// https://docs.gitlab.com/ee/api/resource_state_events.html#list-project-merge-request-state-events
+type MergeRequestResourceStateEvent struct {
+	ID           int        `json:"id"`
+	User         *BasicUser `json:"user"`
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+	ResourceType string     `json:"resource_type,omitempty"`
+	ResourceID   int        `json:"resource_id,omitempty"`
+	State        string     `json:"state,omitempty"`
+}
+
+// GetMergeRequestResourceStateEvents gets a list of merge request resource state events.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ee/api/resource_state_events.html#list-project-merge-request-state-events
+func (s *MergeRequestsService) GetMergeRequestResourceStateEvents(pid interface{}, mergeRequest int, options ...RequestOptionFunc) ([]*MergeRequestResourceStateEvent, *Response, error) {
+	project, err := parseID(pid)
+	if err != nil {
+		return nil, nil, err
+	}
+	u := fmt.Sprintf("projects/%s/merge_requests/%d/resource_state_events", pathEscape(project), mergeRequest)
+
+	req, err := s.client.NewRequest("GET", u, nil, options)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var ps []*MergeRequestResourceStateEvent
+	resp, err := s.client.Do(req, &ps)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return ps, resp, err
+}
+
 // ListMergeRequestPipelines gets all pipelines for the provided merge request.
 //
 // GitLab API docs:
